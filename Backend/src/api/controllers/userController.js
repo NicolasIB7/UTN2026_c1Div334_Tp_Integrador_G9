@@ -1,118 +1,111 @@
 import connection from "../database/db.js";
 
 
-// GET all users
-export const getUsers = async (req, res) => {
+export const getUsers = async (_req, res) => {
     try {
-        // No seleccionamos password por seguridad
-        const sql = "SELECT id, nombre, email, esAdmin FROM usuarios";
-
-        const [rows] = await connection.query(sql);
+        const [rows] = await connection.query("SELECT id, nombre, email, esAdmin FROM usuarios");
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                message: "No se encontraron usuarios"
-            });
+            return res.status(404).json({ error: true, message: "No se encontraron usuarios", data: [] });
         }
 
-        res.status(200).json({
-            total: rows.length,
-            payload: rows
-        });
+        res.status(200).json({ error: false, count: rows.length, data: rows });
 
     } catch (error) {
-        console.log("Error obteniendo usuarios: ", error.message);
-        res.status(500).json({
-            message: "Error interno al obtener usuarios"
-        });
+        res.status(500).json({ error: true, message: "Error interno al obtener usuarios" });
     }
 };
 
 
-// GET user by id
 export const getUserById = async (req, res) => {
     try {
-        // El id ya fue validado y parseado por el middleware validateId, se accede desde req.id
-        const sql = "SELECT id, nombre, email, esAdmin FROM usuarios WHERE usuarios.id = ?";
-        const [rows] = await connection.query(sql, [req.id]);
+        const [rows] = await connection.query("SELECT id, nombre, email, esAdmin FROM usuarios WHERE id = ?", [req.id]);
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                error: `No se encontro usuario con id ${req.id}`
-            });
+            return res.status(404).json({ error: true, message: `No se encontro usuario con id ${req.id}` });
         }
 
-        res.status(200).json({
-            payload: rows[0]
-        });
+        res.status(200).json({ error: false, data: rows[0] });
 
     } catch (error) {
-        console.log("Error obteniendo usuario con id: ", error.message);
-        res.status(500).json({
-            error: "Error interno al obtener un usuario con id"
-        });
+        res.status(500).json({ error: true, message: "Error interno al obtener usuario" });
     }
 };
 
 
-// POST user
 export const createUser = async (req, res) => {
     try {
-        // Con destructuring, extraemos los datos enviados en el body de la peticion
         const { nombre, email, password, esAdmin } = req.body;
 
-        // El "?" es un placeholder que previene ataques de inyeccion SQL
-        const sql = "INSERT INTO usuarios (nombre, email, password, esAdmin) VALUES (?, ?, ?, ?)";
-        await connection.query(sql, [nombre, email, password, esAdmin]);
+        if (!nombre || !email || !password || esAdmin === undefined) {
+            return res.status(400).json({ error: true, message: "Faltan campos requeridos: nombre, email, password, esAdmin" });
+        }
 
-        res.status(201).json({
-            message: "Usuario creado con exito"
-        });
+        const nombreClean = nombre.trim();
+        const emailClean = email.trim();
+        const passwordClean = password.trim();
+
+        if (!nombreClean || !emailClean || !passwordClean) {
+            return res.status(400).json({ error: true, message: "Los campos no pueden estar vacios" });
+        }
+
+        await connection.query(
+            "INSERT INTO usuarios (nombre, email, password, esAdmin) VALUES (?, ?, ?, ?)",
+            [nombreClean, emailClean, passwordClean, esAdmin]
+        );
+
+        res.status(201).json({ error: false, message: "Usuario creado con exito" });
 
     } catch (error) {
-        console.log("Error creando usuario: ", error.message);
-        res.status(500).json({
-            error: "Error interno al crear usuario"
-        });
+        res.status(500).json({ error: true, message: "Error interno al crear usuario" });
     }
 };
 
 
-// PUT user
 export const updateUser = async (req, res) => {
     try {
-        // Recibimos todos los campos del usuario a actualizar
         const { id, nombre, email, password, esAdmin } = req.body;
 
-        const sql = "UPDATE usuarios SET nombre = ?, email = ?, password = ?, esAdmin = ? WHERE id = ?";
-        await connection.query(sql, [nombre, email, password, esAdmin, id]);
+        if (!id || !nombre || !email || !password || esAdmin === undefined) {
+            return res.status(400).json({ error: true, message: "Faltan campos requeridos: id, nombre, email, password, esAdmin" });
+        }
 
-        res.status(200).json({
-            message: "Usuario actualizado correctamente"
-        });
+        const nombreClean = nombre.trim();
+        const emailClean = email.trim();
+        const passwordClean = password.trim();
+
+        if (!nombreClean || !emailClean || !passwordClean) {
+            return res.status(400).json({ error: true, message: "Los campos no pueden estar vacios" });
+        }
+
+        const [result] = await connection.query(
+            "UPDATE usuarios SET nombre = ?, email = ?, password = ?, esAdmin = ? WHERE id = ?",
+            [nombreClean, emailClean, passwordClean, esAdmin, id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: true, message: `No se encontro usuario con id ${id}` });
+        }
+
+        res.status(200).json({ error: false, message: "Usuario actualizado correctamente" });
 
     } catch (error) {
-        console.log("Error actualizando usuario: ", error.message);
-        res.status(500).json({
-            error: "Error interno al actualizar usuario"
-        });
+        res.status(500).json({ error: true, message: "Error interno al actualizar usuario" });
     }
 };
 
 
-// DELETE user
 export const deleteUser = async (req, res) => {
     try {
-        await connection.query("DELETE FROM usuarios WHERE id = ?", [req.id]);
+        const [result] = await connection.query("DELETE FROM usuarios WHERE id = ?", [req.id]);
 
-        res.status(200).json({
-            message: `Usuario con id ${req.id} eliminado exitosamente`
-        });
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: true, message: `No se encontro usuario con id ${req.id}` });
+        }
+
+        res.status(200).json({ error: false, message: `Usuario con id ${req.id} eliminado exitosamente` });
 
     } catch (error) {
-        console.log("Error eliminando usuario: ", error.message);
-        res.status(500).json({
-            error: "Error interno al eliminar usuario"
-        });
+        res.status(500).json({ error: true, message: "Error interno al eliminar usuario" });
     }
 };

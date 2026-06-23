@@ -3,18 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos</title>
-    <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+    <title>FarmaApp | Productos</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <header>
-        <!-- Logo + navegación: Productos | Carrito -->
-    </header>
+    <header></header>
+    <script src="js/header.js"></script>
 
     <main>
-        <!-- Grilla de cards de productos -->
+        <section id="medicamentos">
+            <h2 class="h2-categoria">Medicamentos</h2>
+            <ul id="listado-medicamentos">
+                <!-- Cards generadas dinámicamente por productos.js -->
+            </ul>
+        </section>
+
+        <section id="higiene">
+            <h2 class="h2-categoria">Higiene personal</h2>
+            <ul id="listado-higiene">
+                <!-- Cards generadas dinámicamente por productos.js -->
+            </ul>
+        </section>
     </main>
 
     <script src="js/api.js"></script>

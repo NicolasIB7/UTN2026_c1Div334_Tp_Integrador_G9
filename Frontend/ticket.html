@@ -3,18 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket de compra</title>
-    <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+    <title>FarmaApp | Ticket</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
+    <header></header>
+    <script src="js/header.js"></script>
+
     <main>
-        <!-- Ticket: nombre del usuario, detalle de productos comprados, total -->
-        <!-- Botón "Cerrar" que vuelve a index.html y limpia localStorage -->
+        <div id="contenedor-ticket">
+            <h2>¡Gracias por tu compra!</h2>
+            <div id="info-ticket">
+                <p>Cliente: <span id="ticket-nombre"></span></p>
+                <p>Fecha: <span id="ticket-fecha"></span></p>
+            </div>
+            <table id="tabla-ticket">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Precio unit.</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody id="ticket-items"></tbody>
+            </table>
+            <p id="ticket-total"></p>
+            <button id="btn-continuar">Volver al inicio</button>
+        </div>
     </main>
 
-    <script src="js/api.js"></script>
     <script src="js/ticket.js"></script>
 </body>
 </html>

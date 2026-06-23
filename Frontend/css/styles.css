@@ -2,27 +2,417 @@
    ESTILOS GLOBALES
    ================================ */
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    background-color: #f0f4f2;
+    color: #333;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
 
 /* ================================
    HEADER / NAVEGACIÓN
    ================================ */
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #1a6b3c;
+    padding: 12px 24px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#header-izq {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#logo {
+    font-size: 22px;
+    color: white;
+    background-color: #155230;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#titulo-principal {
+    font-size: 20px;
+    color: white;
+    letter-spacing: 1px;
+}
+
+#alumnos {
+    color: #b2dfca;
+    font-size: 13px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+nav a:hover {
+    color: #b2dfca;
+}
 
 
 /* ================================
    PANTALLA: BIENVENIDA (index.html)
    ================================ */
 
+#seccion-bienvenida {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 85vh;
+    gap: 18px;
+}
+
+#seccion-bienvenida h2 {
+    font-size: 26px;
+    color: #1a6b3c;
+}
+
+#seccion-bienvenida p {
+    color: #666;
+    font-size: 15px;
+}
+
+#input-nombre {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    width: 260px;
+    outline: none;
+}
+
+#input-nombre:focus {
+    border-color: #1a6b3c;
+}
+
+#btn-ingresar {
+    padding: 10px 28px;
+    background-color: #1a6b3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#btn-ingresar:hover {
+    background-color: #155230;
+}
+
 
 /* ================================
    PANTALLA: PRODUCTOS (productos.html)
    ================================ */
+
+.h2-categoria {
+    background-color: #1a6b3c;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+#listado-medicamentos,
+#listado-higiene {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.li-producto {
+    background-color: white;
+    width: 220px;
+    padding: 15px;
+    margin: 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.img-producto {
+    width: 100%;
+    height: 160px;
+    object-fit: contain;
+}
+
+.nombre-producto {
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-bottom: 6px;
+}
+
+.precio-producto {
+    color: #1a6b3c;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.descripcion-producto {
+    color: #777;
+    font-size: 13px;
+    min-height: 60px;
+}
+
+.btn-sumar-a-carrito {
+    padding: 5px;
+    margin-top: 12px;
+    background-color: #1a6b3c;
+    border-radius: 6px;
+    border: none;
+    width: 28px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-restar-a-carrito {
+    padding: 5px;
+    margin-top: 12px;
+    background-color: #c0392b;
+    border-radius: 6px;
+    border: none;
+    width: 28px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-sumar-a-carrito:hover {
+    background-color: #155230;
+}
+
+.btn-restar-a-carrito:hover {
+    background-color: #922b21;
+}
 
 
 /* ================================
    PANTALLA: CARRITO (carrito.html)
    ================================ */
 
+#contenedor-carrito {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    gap: 18px;
+}
+
+#contenedor-carrito h2 {
+    font-size: 22px;
+    color: #1a6b3c;
+}
+
+#tabla-carrito {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 700px;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#tabla-carrito th {
+    background-color: #1a6b3c;
+    color: white;
+    padding: 12px 18px;
+    text-align: center;
+}
+
+#tabla-carrito td {
+    padding: 10px 18px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#total {
+    background-color: white;
+    border: 2px solid #1a6b3c;
+    color: #1a6b3c;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 17px;
+}
+
+#acciones-carrito {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-limpiar {
+    padding: 9px 18px;
+    background-color: #c0392b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-confirmar {
+    padding: 9px 18px;
+    background-color: #1a6b3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-limpiar:hover {
+    background-color: #922b21;
+}
+
+.btn-confirmar:hover {
+    background-color: #155230;
+}
+
+.btn-cantidad {
+    padding: 2px 8px;
+    background-color: #ddd;
+    color: #333;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 0 4px;
+}
+
+.btn-cantidad:hover {
+    background-color: #bbb;
+}
+
+.btn-eliminar-item {
+    padding: 4px 8px;
+    background-color: #c0392b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-eliminar-item:hover {
+    background-color: #922b21;
+}
+
+.carrito-vacio {
+    padding: 20px;
+    color: #888;
+    font-style: italic;
+}
+
 
 /* ================================
    PANTALLA: TICKET (ticket.html)
    ================================ */
+
+#contenedor-ticket {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    gap: 20px;
+}
+
+#contenedor-ticket h2 {
+    font-size: 24px;
+    color: #1a6b3c;
+}
+
+#info-ticket {
+    background-color: white;
+    border-left: 4px solid #1a6b3c;
+    border-radius: 6px;
+    padding: 14px 28px;
+    text-align: left;
+    color: #555;
+    line-height: 1.9;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+#info-ticket span {
+    color: #1a6b3c;
+    font-weight: 600;
+}
+
+#tabla-ticket {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 600px;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#tabla-ticket th {
+    background-color: #1a6b3c;
+    color: white;
+    padding: 10px 18px;
+    text-align: center;
+}
+
+#tabla-ticket td {
+    padding: 10px 18px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#ticket-total {
+    background-color: white;
+    border: 2px solid #1a6b3c;
+    color: #1a6b3c;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 17px;
+}
+
+#btn-continuar {
+    padding: 10px 28px;
+    background-color: #1a6b3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#btn-continuar:hover {
+    background-color: #155230;
+}

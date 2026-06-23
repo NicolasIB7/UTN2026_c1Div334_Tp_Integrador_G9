@@ -3,20 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrito</title>
-    <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+    <title>FarmaApp | Carrito</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-    <header>
-        <!-- Logo + navegación: Productos | Carrito -->
-    </header>
+    <header></header>
+    <script src="js/header.js"></script>
 
     <main>
-        <!-- Lista de productos en el carrito, cantidades, total y botón comprar -->
+        <div id="contenedor-carrito">
+            <h2>Mi carrito</h2>
+            <table id="tabla-carrito">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Precio unit.</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo-tabla"></tbody>
+            </table>
+            <p id="total">Total: $0</p>
+            <div id="acciones-carrito">
+                <button class="btn-limpiar" id="btn-limpiar">Limpiar carrito</button>
+                <button class="btn-confirmar" id="btn-confirmar">Confirmar compra</button>
+            </div>
+        </div>
     </main>
 
+    <script src="js/api.js"></script>
     <script src="js/carrito.js"></script>
 </body>
 </html>

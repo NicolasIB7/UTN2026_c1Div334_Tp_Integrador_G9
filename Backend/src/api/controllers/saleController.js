@@ -1,117 +1,120 @@
 import connection from "../database/db.js";
 
 
-// GET all sales
-export const getSales = async (req, res) => {
+export const getSales = async (_req, res) => {
     try {
-        const sql = "SELECT id, nombre_usuario, fecha, precio_total FROM ventas";
-
-        const [rows] = await connection.query(sql);
+        const [rows] = await connection.query("SELECT id, nombre_usuario, fecha, precio_total FROM ventas");
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                message: "No se encontraron ventas"
-            });
+            return res.status(404).json({ error: true, message: "No se encontraron ventas", data: [] });
         }
 
-        res.status(200).json({
-            total: rows.length,
-            payload: rows
-        });
+        res.status(200).json({ error: false, count: rows.length, data: rows });
 
     } catch (error) {
-        console.log("Error obteniendo ventas: ", error.message);
-        res.status(500).json({
-            message: "Error interno al obtener ventas"
-        });
+        res.status(500).json({ error: true, message: "Error interno al obtener ventas" });
     }
 };
 
 
-// GET sale by id
 export const getSaleById = async (req, res) => {
     try {
-        // El id ya fue validado y parseado por el middleware validateId, se accede desde req.id
-        const sql = "SELECT id, nombre_usuario, fecha, precio_total FROM ventas WHERE ventas.id = ?";
-        const [rows] = await connection.query(sql, [req.id]);
+        const [rows] = await connection.query(
+            "SELECT id, nombre_usuario, fecha, precio_total FROM ventas WHERE id = ?",
+            [req.id]
+        );
 
         if (rows.length === 0) {
-            return res.status(404).json({
-                error: `No se encontro venta con id ${req.id}`
-            });
+            return res.status(404).json({ error: true, message: `No se encontro venta con id ${req.id}` });
         }
 
-        res.status(200).json({
-            payload: rows[0]
-        });
+        res.status(200).json({ error: false, data: rows[0] });
 
     } catch (error) {
-        console.log("Error obteniendo venta con id: ", error.message);
-        res.status(500).json({
-            error: "Error interno al obtener una venta con id"
-        });
+        res.status(500).json({ error: true, message: "Error interno al obtener venta" });
     }
 };
 
 
-// POST sale
 export const createSale = async (req, res) => {
     try {
-        // Con destructuring, extraemos los datos enviados en el body de la peticion
         const { nombre_usuario, fecha, precio_total } = req.body;
 
-        // El "?" es un placeholder que previene ataques de inyeccion SQL
-        const sql = "INSERT INTO ventas (nombre_usuario, fecha, precio_total) VALUES (?, ?, ?)";
-        await connection.query(sql, [nombre_usuario, fecha, precio_total]);
+        if (!nombre_usuario || !fecha || precio_total === undefined) {
+            return res.status(400).json({ error: true, message: "Faltan campos requeridos: nombre_usuario, fecha, precio_total" });
+        }
 
-        res.status(201).json({
-            message: "Venta creada con exito"
-        });
+        const nombreClean = nombre_usuario.trim();
+        const fechaClean = fecha.trim();
+
+        if (!nombreClean || !fechaClean) {
+            return res.status(400).json({ error: true, message: "Los campos no pueden estar vacios" });
+        }
+
+        if (isNaN(precio_total) || Number(precio_total) < 0) {
+            return res.status(400).json({ error: true, message: "precio_total debe ser un numero positivo" });
+        }
+
+        await connection.query(
+            "INSERT INTO ventas (nombre_usuario, fecha, precio_total) VALUES (?, ?, ?)",
+            [nombreClean, fechaClean, Number(precio_total)]
+        );
+
+        res.status(201).json({ error: false, message: "Venta creada con exito" });
 
     } catch (error) {
-        console.log("Error creando venta: ", error.message);
-        res.status(500).json({
-            error: "Error interno al crear venta"
-        });
+        res.status(500).json({ error: true, message: "Error interno al crear venta" });
     }
 };
 
 
-// PUT sale
 export const updateSale = async (req, res) => {
     try {
-        // Recibimos todos los campos de la venta a actualizar
         const { id, nombre_usuario, fecha, precio_total } = req.body;
 
-        const sql = "UPDATE ventas SET nombre_usuario = ?, fecha = ?, precio_total = ? WHERE id = ?";
-        await connection.query(sql, [nombre_usuario, fecha, precio_total, id]);
+        if (!id || !nombre_usuario || !fecha || precio_total === undefined) {
+            return res.status(400).json({ error: true, message: "Faltan campos requeridos: id, nombre_usuario, fecha, precio_total" });
+        }
 
-        res.status(200).json({
-            message: "Venta actualizada correctamente"
-        });
+        const nombreClean = nombre_usuario.trim();
+        const fechaClean = fecha.trim();
+
+        if (!nombreClean || !fechaClean) {
+            return res.status(400).json({ error: true, message: "Los campos no pueden estar vacios" });
+        }
+
+        if (isNaN(precio_total) || Number(precio_total) < 0) {
+            return res.status(400).json({ error: true, message: "precio_total debe ser un numero positivo" });
+        }
+
+        const [result] = await connection.query(
+            "UPDATE ventas SET nombre_usuario = ?, fecha = ?, precio_total = ? WHERE id = ?",
+            [nombreClean, fechaClean, Number(precio_total), id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: true, message: `No se encontro venta con id ${id}` });
+        }
+
+        res.status(200).json({ error: false, message: "Venta actualizada correctamente" });
 
     } catch (error) {
-        console.log("Error actualizando venta: ", error.message);
-        res.status(500).json({
-            error: "Error interno al actualizar venta"
-        });
+        res.status(500).json({ error: true, message: "Error interno al actualizar venta" });
     }
 };
 
 
-// DELETE sale
 export const deleteSale = async (req, res) => {
     try {
-        await connection.query("DELETE FROM ventas WHERE id = ?", [req.id]);
+        const [result] = await connection.query("DELETE FROM ventas WHERE id = ?", [req.id]);
 
-        res.status(200).json({
-            message: `Venta con id ${req.id} eliminada exitosamente`
-        });
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: true, message: `No se encontro venta con id ${req.id}` });
+        }
+
+        res.status(200).json({ error: false, message: `Venta con id ${req.id} eliminada exitosamente` });
 
     } catch (error) {
-        console.log("Error eliminando venta: ", error.message);
-        res.status(500).json({
-            error: "Error interno al eliminar venta"
-        });
+        res.status(500).json({ error: true, message: "Error interno al eliminar venta" });
     }
 };
