@@ -1,8 +1,8 @@
-import connection from "../database/db.js";
+import { getAllProducts, getProductById as fetchProductById, insertProduct, updateProductById, deleteProductById } from "../models/productModel.js";
 
 export const getProducts = async (_req, res) => {
     try {
-        const [rows] = await connection.query("SELECT id, nombre, precio, imagen, categoria, activo FROM productos");
+        const rows = await getAllProducts();
 
         if (rows.length === 0) {
             return res.status(404).json({ error: true, message: "No se encontraron productos", data: [] });
@@ -17,10 +17,7 @@ export const getProducts = async (_req, res) => {
 
 export const getProductById = async (req, res) => {
     try {
-        const [rows] = await connection.query(
-            "SELECT id, nombre, precio, imagen, categoria, activo FROM productos WHERE id = ?",
-            [req.id]
-        );
+        const rows = await fetchProductById(req.id);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: true, message: `No se encontro producto con id ${req.id}` });
@@ -53,10 +50,7 @@ export const createProduct = async (req, res) => {
             return res.status(400).json({ error: true, message: "precio debe ser un numero positivo" });
         }
 
-        await connection.query(
-            "INSERT INTO productos (nombre, precio, imagen, categoria, activo) VALUES (?, ?, ?, ?, ?)",
-            [nombreClean, Number(precio), imagenClean, categoriaClean, activo]
-        );
+        await insertProduct(nombreClean, Number(precio), imagenClean, categoriaClean, activo);
 
         res.status(201).json({ error: false, message: "Producto creado con exito" });
 
@@ -85,10 +79,7 @@ export const updateProduct = async (req, res) => {
             return res.status(400).json({ error: true, message: "precio debe ser un numero positivo" });
         }
 
-        const [result] = await connection.query(
-            "UPDATE productos SET nombre = ?, precio = ?, imagen = ?, categoria = ?, activo = ? WHERE id = ?",
-            [nombreClean, Number(precio), imagenClean, categoriaClean, activo, id]
-        );
+        const result = await updateProductById(id, nombreClean, Number(precio), imagenClean, categoriaClean, activo);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: `No se encontro producto con id ${id}` });
@@ -103,7 +94,7 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
     try {
-        const [result] = await connection.query("DELETE FROM productos WHERE id = ?", [req.id]);
+        const result = await deleteProductById(req.id);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: `No se encontro producto con id ${req.id}` });

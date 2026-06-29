@@ -1,9 +1,9 @@
-import connection from "../database/db.js";
+import { getAllSales, getSaleById as fetchSaleById, insertSale, updateSaleById, deleteSaleById } from "../models/saleModel.js";
 
 
 export const getSales = async (_req, res) => {
     try {
-        const [rows] = await connection.query("SELECT id, nombre_usuario, fecha, precio_total FROM ventas");
+        const rows = await getAllSales();
 
         if (rows.length === 0) {
             return res.status(404).json({ error: true, message: "No se encontraron ventas", data: [] });
@@ -19,10 +19,7 @@ export const getSales = async (_req, res) => {
 
 export const getSaleById = async (req, res) => {
     try {
-        const [rows] = await connection.query(
-            "SELECT id, nombre_usuario, fecha, precio_total FROM ventas WHERE id = ?",
-            [req.id]
-        );
+        const rows = await fetchSaleById(req.id);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: true, message: `No se encontro venta con id ${req.id}` });
@@ -55,10 +52,7 @@ export const createSale = async (req, res) => {
             return res.status(400).json({ error: true, message: "precio_total debe ser un numero positivo" });
         }
 
-        await connection.query(
-            "INSERT INTO ventas (nombre_usuario, fecha, precio_total) VALUES (?, ?, ?)",
-            [nombreClean, fechaClean, Number(precio_total)]
-        );
+        await insertSale(nombreClean, fechaClean, Number(precio_total));
 
         res.status(201).json({ error: false, message: "Venta creada con exito" });
 
@@ -87,10 +81,7 @@ export const updateSale = async (req, res) => {
             return res.status(400).json({ error: true, message: "precio_total debe ser un numero positivo" });
         }
 
-        const [result] = await connection.query(
-            "UPDATE ventas SET nombre_usuario = ?, fecha = ?, precio_total = ? WHERE id = ?",
-            [nombreClean, fechaClean, Number(precio_total), id]
-        );
+        const result = await updateSaleById(id, nombreClean, fechaClean, Number(precio_total));
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: `No se encontro venta con id ${id}` });
@@ -106,7 +97,7 @@ export const updateSale = async (req, res) => {
 
 export const deleteSale = async (req, res) => {
     try {
-        const [result] = await connection.query("DELETE FROM ventas WHERE id = ?", [req.id]);
+        const result = await deleteSaleById(req.id);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: `No se encontro venta con id ${req.id}` });

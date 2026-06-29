@@ -3,9 +3,7 @@ import cors from "cors";
 import environments from "./src/api/config/environments.js";
 
 // Routers de cada recurso
-import productRoutes from "./src/api/routes/productRoutes.js";
-import userRoutes from "./src/api/routes/userRoutes.js";
-import saleRoutes from "./src/api/routes/saleRoutes.js";
+import { productRoutes, userRoutes, saleRoutes } from "./src/api/routes/index.js";
 
 ///////////
 // Config

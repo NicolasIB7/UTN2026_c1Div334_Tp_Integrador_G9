@@ -1,9 +1,9 @@
-import connection from "../database/db.js";
+import { getAllUsers, getUserById as fetchUserById, insertUser, updateUserById, deleteUserById } from "../models/userModel.js";
 
 
 export const getUsers = async (_req, res) => {
     try {
-        const [rows] = await connection.query("SELECT id, nombre, email, esAdmin FROM usuarios");
+        const rows = await getAllUsers();
 
         if (rows.length === 0) {
             return res.status(404).json({ error: true, message: "No se encontraron usuarios", data: [] });
@@ -19,7 +19,7 @@ export const getUsers = async (_req, res) => {
 
 export const getUserById = async (req, res) => {
     try {
-        const [rows] = await connection.query("SELECT id, nombre, email, esAdmin FROM usuarios WHERE id = ?", [req.id]);
+        const rows = await fetchUserById(req.id);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: true, message: `No se encontro usuario con id ${req.id}` });
@@ -49,10 +49,7 @@ export const createUser = async (req, res) => {
             return res.status(400).json({ error: true, message: "Los campos no pueden estar vacios" });
         }
 
-        await connection.query(
-            "INSERT INTO usuarios (nombre, email, password, esAdmin) VALUES (?, ?, ?, ?)",
-            [nombreClean, emailClean, passwordClean, esAdmin]
-        );
+        await insertUser(nombreClean, emailClean, passwordClean, esAdmin);
 
         res.status(201).json({ error: false, message: "Usuario creado con exito" });
 
@@ -78,10 +75,7 @@ export const updateUser = async (req, res) => {
             return res.status(400).json({ error: true, message: "Los campos no pueden estar vacios" });
         }
 
-        const [result] = await connection.query(
-            "UPDATE usuarios SET nombre = ?, email = ?, password = ?, esAdmin = ? WHERE id = ?",
-            [nombreClean, emailClean, passwordClean, esAdmin, id]
-        );
+        const result = await updateUserById(id, nombreClean, emailClean, passwordClean, esAdmin);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: `No se encontro usuario con id ${id}` });
@@ -97,7 +91,7 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
     try {
-        const [result] = await connection.query("DELETE FROM usuarios WHERE id = ?", [req.id]);
+        const result = await deleteUserById(req.id);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: true, message: `No se encontro usuario con id ${req.id}` });
